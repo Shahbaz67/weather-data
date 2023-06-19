@@ -1,0 +1,30 @@
+version: "3"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "wait-for-it db:5432 &&
+             python manage.py migrate &&
+             python manage.py shell -c 'from weather_info.parser import *; parse()'
+             python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+  db:
+      image: postgres:12.15
+      environment:
+        - POSTGRES_DB=weather
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=1234
+      networks:
+      - mynetwork
+networks:
+  mynetwork:
+  

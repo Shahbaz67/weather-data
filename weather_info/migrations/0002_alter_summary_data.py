@@ -11,9 +11,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='summary',
-            name='data',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.JSONField(), size=None),
+        migrations.RunSQL(
+            'ALTER TABLE weather_info_summary ALTER COLUMN data TYPE jsonb[] USING array[data]',
+            'ALTER TABLE weather_info_summary ALTER COLUMN data TYPE jsonb[] USING data::jsonb[]',
         ),
     ]
